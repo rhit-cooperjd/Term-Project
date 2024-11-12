@@ -129,7 +129,7 @@ import Destination as dt
 class ImprovedSimulation:
     def __init__(self):
         self.flag = dt.Destination(-100, -100, 3)
-        self.layers = [2, 4, 4, 2]
+        self.layers = [2, 4, 2]
         
         # EA parameters
         self.genesize = np.sum(np.multiply(self.layers[1:], self.layers[:-1])) + np.sum(self.layers[1:])

@@ -4,7 +4,8 @@ import math
 
 
 class Agent():
-    def __init__(self):
+    def __init__(self, start=(0,0)):
+        self.x, self.y = start
         self.x = 0
         self.y = 0
         #makes the angle smaller(more samples basically)
@@ -48,11 +49,12 @@ class Agent():
         destinationReached = flag.destinationReached(self.x, self.y)
         return destinationReached
 
-    def move(self, nn):
+    def move(self, nn, nn_inputs):
         # self.fixMotors()
         # self.LM = np.random.rand() * np.pi * 2
         # self.RM = np.random.rand() * np.pi * 2
-        motorVals = nn.forward(np.array([self.leftSensor, self.rightSensor]))
+        # motorVals = nn.forward(np.array([self.leftSensor, self.rightSensor]))
+        motorVals = nn.forward(nn_inputs)
         self.LM, self.RM = motorVals[0]
         # print(f"left motor: {self.LM}, right motor: {self.RM}")
         self.update()
