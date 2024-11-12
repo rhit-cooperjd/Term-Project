@@ -11,19 +11,21 @@ class HybridController:
     def __init__(self, checkpoints: List[Tuple[float, float]], layers, flag):
         self.checkpoints = checkpoints
         self.flag = flag
+        self.num_generations = 100
         self.path_planner = moea.MOEA(
             start=(0, 0),
             end=(flag.xpos, flag.ypos),
             checkpoints=checkpoints,
             destination_radius=flag.radius,
             population_size=50,
-            num_generations=100,
+            num_generations=self.num_generations,
             num_weight_vectors=5
         )
-        self.agent_path_index = 1
+        self.agent_path_index = 0
         self.layers = layers
         self.nn = fnn.FNN(self.layers)
         self.agent_paths = [[] for _ in range(100)] # num_generations=100
+        self.cycles = self.num_generations
         
     def train_hybrid_system(self):
         paths, objectives = self.path_planner.optimize()
@@ -62,7 +64,7 @@ class HybridController:
         """Evaluate using both path following and checkpoint coverage"""
         agent = Agent.Agent()
         duration = 1000
-        if duration % self.agent_path_index == 0:
+        if duration % self.num_generations == 0:
             current_path = [(0, 0)]
         path_error = 0
         checkpoint_error = 0
@@ -99,14 +101,15 @@ class HybridController:
 
                 
                 agent.move(self.nn, nn_inputs)
-                if duration % self.agent_path_index == 0:
+                if self.cycles % self.num_generations == 0:
                     current_path.append((agent.x, agent.y))
                 
             
             if step == 999:
                 path_error += 500  # Timeout penalty
         
-        if duration % self.agent_path_index == 0:
+        if self.cycles % 10 == 0:
+            print("index" + str(self.agent_path_index))
             self.agent_paths[self.agent_path_index] = current_path
             self.agent_path_index += 1
         # Calculate checkpoint coverage error
