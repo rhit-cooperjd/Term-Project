@@ -37,17 +37,17 @@ plt.plot(checkpoints_x, checkpoints_y, 'gx', label="Checkpoints")
 # best_path_y = [point[1] for point in best_path]
 # plt.plot(best_path_x, best_path_y, label="Best path")
 
-for i in range(sim.agent_path_index):
-    # plt.plot(sim.agent_paths[i])
-    path_x = [point[0] for point in sim.agent_paths[i]]
-    path_y = [point[1] for point in sim.agent_paths[i]]
-    plt.plot(path_x, path_y, alpha=0.3)
+# for i in range(sim.agent_path_index):
+#     # plt.plot(sim.agent_paths[i])
+#     path_x = [point[0] for point in sim.agent_paths[i]]
+#     path_y = [point[1] for point in sim.agent_paths[i]]
+#     plt.plot(path_x, path_y, alpha=0.3)
 
 # print(sim.fitnesses)
 highest_fitness_path_index = find_index_of_best_ind(sim)
 highest_fitness_path_x = [point[0] for point in sim.agent_paths[highest_fitness_path_index]]
 highest_fitness_path_y = [point[1] for point in sim.agent_paths[highest_fitness_path_index]]
-plt.plot(highest_fitness_path_x, highest_fitness_path_y, color='mediumseagreen', label='Most Fit Agent')
+plt.plot(highest_fitness_path_x, highest_fitness_path_y, color='k', label='Most Fit Agent')
 plt.plot(f"highest fitness: {sim.agent_paths[highest_fitness_path_index]}")
 
 # last_path_x = [point[0] for point in sim.agent_paths[sim.agent_path_index]]
