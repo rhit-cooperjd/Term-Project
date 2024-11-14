@@ -1,6 +1,7 @@
 import hybrid_controller as controller
 import Destination as dt
 import matplotlib.pyplot as plt
+import numpy as np
     
 checkpoints = [(10, 20), (30, 45), (50, 60)]
 
@@ -16,10 +17,12 @@ sim = controller.HybridController(
 
 def find_index_of_best_ind(sim):
     best_fitness = 0
-    for f in sim.fitnesses:
+    best_index = None
+    for i, f in enumerate(sim.fitnesses):
         if f > best_fitness:
             best_fitness = f
-    return f
+            best_index = i
+    return best_index
 
 best_path, best_ind, best_weight = sim.train_hybrid_system()
 
@@ -40,10 +43,12 @@ for i in range(sim.agent_path_index):
     path_y = [point[1] for point in sim.agent_paths[i]]
     plt.plot(path_x, path_y, alpha=0.3)
 
+# print(sim.fitnesses)
 highest_fitness_path_index = find_index_of_best_ind(sim)
 highest_fitness_path_x = [point[0] for point in sim.agent_paths[highest_fitness_path_index]]
 highest_fitness_path_y = [point[1] for point in sim.agent_paths[highest_fitness_path_index]]
 plt.plot(highest_fitness_path_x, highest_fitness_path_y, color='mediumseagreen', label='Most Fit Agent')
+plt.plot(f"highest fitness: {sim.agent_paths[highest_fitness_path_index]}")
 
 # last_path_x = [point[0] for point in sim.agent_paths[sim.agent_path_index]]
 # last_path_y = [point[1] for point in sim.agent_paths[sim.agent_path_index]]

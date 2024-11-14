@@ -23,12 +23,12 @@ class HybridController:
         self.agent_path_index = 0
         self.layers = layers
         self.nn = fnn.FNN(self.layers)
-        self.agent_paths = [[] for _ in range(5000)] # num_generations=100
+        self.agent_paths = [] # num_generations=100
         self.cycles = self.num_generations,
-        self.final_checkpoint_score = [[] for _ in range(5000)]
-        self.final_path_score = [[] for _ in range(5000)]
-        self.weights = [[] for _ in range(5000)]
-        self.fitnesses = [[] for _ in range(5000)]
+        self.final_checkpoint_score = []
+        self.final_path_score = []
+        self.weights = []
+        self.fitnesses = []
         
     def train_hybrid_system(self):
         paths, objectives = self.path_planner.optimize()
@@ -137,7 +137,7 @@ class HybridController:
         
         checkpoint_score = 0
         for dist in best_checkpoint_distances.values():
-            checkpoint_score += 1 / (1 + dist) * 10
+            checkpoint_score += 1 / (1 + dist)
         
         # if current_path:
         #     self.agent_paths.append(current_path)
@@ -150,9 +150,9 @@ class HybridController:
         norm_path_length = path_length / self.path_planner.reference_point[0]
         norm_checkpoint_score = checkpoint_score / len(self.checkpoints)
 
-        fitness = (weight[0] * (1 - norm_path_length) + weight[1] * norm_checkpoint_score)
+        fitness = float(weight[0] * (1 - norm_path_length) + weight[1] * norm_checkpoint_score)
 
         self.fitnesses.append(fitness)
-        print(fitness)
+        # print(fitness)
 
         return fitness
