@@ -22,13 +22,17 @@ class MOEA:
         self.num_generations = num_generations
         self.mutation_rate = mutation_rate
         self.num_weight_vectors = num_weight_vectors
+        self.max_checkpoint_point_value = 50
         
         # Generate uniformly distributed weight vectors for Chebyshev decomposition
         self.weights = self._generate_weight_vectors()
         
         # Initialize reference point for objective normalization
-        self.reference_point = np.array([float('inf'), float('inf')])
-        
+        # self.reference_point = np.array([float('inf'), float('inf')])
+        max_path_length = np.linalg.norm(self.end-self.start) * 2
+        max_checkpoint_score = len(self.checkpoints) * self.max_checkpoint_point_value
+        self.reference_point = np.array([max_path_length, max_checkpoint_score])
+
     def _generate_weight_vectors(self) -> np.ndarray:
         """Generate weight vectors for Chebyshev decomposition"""
         weights = []
@@ -75,16 +79,15 @@ class MOEA:
                     distance += remaining_dist - self.destination_radius
             else:
                 distance += np.linalg.norm(path[i+1] - path[i])
-            
-        # Calculate checkpoint coverage (negative because we're minimizing)
+
         checkpoint_score = 0
         for checkpoint in self.checkpoints:
-            min_distance_to_checkpoint = float('inf')
+            min_distance = float('inf')
             for point in path:
                 dist = np.linalg.norm(point - checkpoint)
-                min_distance_to_checkpoint = min(min_distance_to_checkpoint, dist)
-            checkpoint_score -= 1 / (1 + min_distance_to_checkpoint)
-            
+                min_distance = min(min_distance, dist)
+            checkpoint_score = 1 / (1 + min_distance)
+
         return distance, checkpoint_score
     
     def _crossover(self, parent1: np.ndarray, parent2: np.ndarray) -> np.ndarray:
@@ -195,8 +198,8 @@ class MOEA:
             is_dominated = False
             for j, obj2 in enumerate(final_objectives):
                 if i != j:
-                    if (obj2[0] <= obj1[0] and obj2[1] <= obj1[1] and 
-                        (obj2[0] < obj1[0] or obj2[1] < obj1[1])):
+                    if (obj2[0] <= obj1[0] and obj2[1] >= obj1[1] and 
+                        (obj2[0] < obj1[0] or obj2[1] > obj1[1])):
                         is_dominated = True
                         break
             if not is_dominated:
